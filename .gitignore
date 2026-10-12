@@ -19,3 +19,4 @@ __pycache__/
 
 # Resultados de avaliação gerados
 evals/results/
+data/chunks.jsonl

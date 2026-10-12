@@ -6,6 +6,7 @@ ou Ollama não exige mexer no resto do código.
 import hashlib
 import json
 import os
+import re
 import time
 from pathlib import Path
 
@@ -44,7 +45,19 @@ def _modelo_base(provider: str, papel: str, temperature: float) -> BaseChatModel
 
 def _eh_rate_limit(exc: Exception) -> bool:
     texto = f"{type(exc).__name__} {exc}".lower()
-    return any(s in texto for s in ("429", "rate limit", "rate_limit", "resource_exhausted", "too many requests"))
+    sinais = ("429", "rate limit", "rate_limit", "resource_exhausted", "too many requests", "503", "unavailable", "overloaded")
+    return any(s in texto for s in sinais)
+
+
+def _espera_sugerida(exc: Exception, padrao: float) -> float:
+    """Groq informa o tempo de espera na mensagem ('try again in 7.5s' / '350ms' / '1m2.5s')."""
+    m = re.search(r"try again in (?:(\d+)m(?!s))?(?:([\d.]+)(ms|s))?", str(exc))
+    if not m or not (m.group(1) or m.group(2)):
+        return padrao
+    seg = int(m.group(1) or 0) * 60
+    if m.group(2):
+        seg += float(m.group(2)) / (1000 if m.group(3) == "ms" else 1)
+    return min(seg + 1.0, 90.0)
 
 
 def _chave(provider: str, modelo: str, mensagens: list[BaseMessage]) -> str:
@@ -72,8 +85,8 @@ class LLMComCache:
             except Exception as exc:  # noqa: BLE001 - só repetimos erros de rate limit
                 if not _eh_rate_limit(exc) or tentativa == MAX_RETRIES - 1:
                     raise
-                espera = min(2 ** tentativa * 3, 60)
-                print(f"[llm] rate limit ({self.provider}); aguardando {espera}s...")
+                espera = _espera_sugerida(exc, min(2 ** tentativa * 3, 60))
+                print(f"[llm] limite/indisponibilidade ({self.provider}); aguardando {espera:.0f}s...", flush=True)
                 time.sleep(espera)
 
     def invoke(self, entrada, **kwargs) -> BaseMessage:
@@ -89,7 +102,11 @@ class LLMComCache:
 
     def with_structured_output(self, schema):
         """Saída estruturada (Pydantic). Sem cache em disco, mas com retry em rate limit."""
-        estruturado = self.modelo.with_structured_output(schema)
+        # No Groq, o tool calling dos modelos gpt-oss é instável (chama ferramenta inexistente); json_schema é estável.
+        if self.provider == "groq":
+            estruturado = self.modelo.with_structured_output(schema, method="json_schema")
+        else:
+            estruturado = self.modelo.with_structured_output(schema)
 
         class _Estruturado:
             def invoke(inner, entrada, **kwargs):  # noqa: N805

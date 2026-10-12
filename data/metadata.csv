@@ -1,0 +1,25 @@
+arquivo,titulo,autores,ano,tipo,idioma,url
+leveson2018_handbook.pdf,STPA Handbook,Leveson; Thomas,2018,manual,en,http://psas.scripts.mit.edu/home/get_file.php?name=STPA_handbook.pdf
+stpa_primer2013.pdf,STPA Primer,Leveson et al.,2013,manual,en,https://sos-vo.org/system/files/sos_files/STPA-Primer-v0pdf.pdf
+mylius2025_2506_01782.pdf,Systematic Hazard Analysis for Frontier AI using STPA,Simon Mylius,2025,artigo,en,https://arxiv.org/pdf/2506.01782
+carlucci2026_2606_13474.pdf,Exploring Systems-Thinking Approaches to Loss of Control Risk,Aurelio Carlucci; Sean P. Fillingham; James Walpole et al.,2026,artigo,en,https://arxiv.org/pdf/2606.13474
+raeisdanaei2025_2503_12043.pdf,"An LLM-Integrated Framework for Completion, Management, and Tracing of STPA",Ali Raeisdanaei; Juho Kim; Michael Liao et al.,2025,artigo,en,https://arxiv.org/pdf/2503.12043
+chen2025_2508_16708.pdf,A Scalable Framework for the Management of STPA Requirements: a Case Study on eVTOL Operations,Shufeng Chen; Halima El Badaoui; Mariat James Elizebeth et al.,2025,artigo,en,https://arxiv.org/pdf/2508.16708
+qi2023_2302_10588.pdf,STPA for Learning-Enabled Systems: A Survey and A New Practice,Yi Qi; Yi Dong; Siddartha Khastgir et al.,2023,artigo,en,https://arxiv.org/pdf/2302.10588
+abdulkhaleq2017_1703_03657.pdf,Using STPA in Compliance with ISO 26262 for Developing a Safe Architecture for Fully Automated Vehicles,Asim Abdulkhaleq; Stefan Wagner; Daniel Lammering et al.,2017,artigo,en,https://arxiv.org/pdf/1703.03657
+nouri2024_2403_09509.pdf,On STPA for Distributed Development of Safe Autonomous Driving: An Interview Study,Ali Nouri; Christian Berger; Fredrik Törner,2024,artigo,en,https://arxiv.org/pdf/2403.09509
+abdulkhaleq2016_1612_03109.pdf,A comprehensive safety engineering approach for software-intensive systems based on STPA,Asim Abdulkhaleq; Stefan Wagner; Nancy Leveson,2016,artigo,en,https://arxiv.org/pdf/1612.03109
+elizebeth2025_2510_09283.pdf,Safety Analysis of eVTOL Operations based on STPA,Mariat James Elizebeth; Shufeng Chen; Halima El Badaoui et al.,2025,artigo,en,https://arxiv.org/pdf/2510.09283
+diemert2023_2304_00408.pdf,Hazard Analysis for Self-Adaptive Systems Using System-Theoretic Process Analysis,Simon Diemert; Jens H. Weber,2023,artigo,en,https://arxiv.org/pdf/2304.00408
+badaoui2025_2508_10446.pdf,A Structured Framework for Prioritizing Unsafe Control Actions in STPA: Case Study on eVTOL Operations,Halima El Badaoui,2025,artigo,en,https://arxiv.org/pdf/2508.10446
+hong2025_2502_07974.pdf,From Hazard Identification to Controller Design: Proactive and LLM-Supported Safety Engineering for ML-Powered Systems,Yining Hong; Christopher S. Timperley; Christian Kästner,2025,artigo,en,https://arxiv.org/pdf/2502.07974
+barrett2025_2512_17600.pdf,STAMP/STPA Informed Characterization of Factors Leading to Loss of Control in AI Systems,Steve Barrett; Anna Bruvere; Sean P. Fillingham et al.,2025,artigo,en,https://arxiv.org/pdf/2512.17600
+mindermann2017_1710_11571.pdf,Exploratory Study of the Privacy Extension for System Theoretic Process Analysis (STPA-Priv) to elicit Privacy Risks in eHealth,Kai Mindermann; Frederik Riedel; Asim Abdulkhaleq et al.,2017,artigo,en,https://arxiv.org/pdf/1710.11571
+yu2020_2006_02930.pdf,Data-Flow-Based Extension of the System-Theoretic Process Analysis for Security (STPA-Sec),Jinghua Yu; Stefan Wagner; Feng Luo,2020,artigo,en,https://arxiv.org/pdf/2006.02930
+alemzadeh2015_1504_07135.pdf,Systems-theoretic Safety Assessment of Robotic Telesurgical Systems,Homa Alemzadeh; Daniel Chen; Andrew Lewis et al.,2015,artigo,en,https://arxiv.org/pdf/1504.07135
+abdulkhaleq2016_1612_03103.pdf,A Systematic and Semi-Automatic Safety-Based Test Case Generation Approach Based on Systems-Theoretic Process Analysis,Asim Abdulkhaleq; Stefan Wagner,2016,artigo,en,https://arxiv.org/pdf/1612.03103
+rismani2024_2410_22526.pdf,From Silos to Systems: Process-Oriented Hazard Analysis for AI Systems,Shalaleh Rismani; Roel Dobbe; AJung Moon,2024,artigo,en,https://arxiv.org/pdf/2410.22526
+sahay2022_2212_10830.pdf,"A Comparative Risk Analysis on CyberShip System with STPA-Sec, STRIDE and CORAS",Rishikesh Sahay; D. A. Sepulveda Estay; Weizhi Meng et al.,2022,artigo,en,https://arxiv.org/pdf/2212.10830
+dardik2026_2605_30697.pdf,FASR: Automated Identification of Unsafe Control Actions in STPA,Ian Dardik; Yining She; Sam Procter et al.,2026,artigo,en,https://arxiv.org/pdf/2605.30697
+gautham2022_2204_08999.pdf,STPA-driven Multilevel Runtime Monitoring for In-time Hazard Detection,Smitha Gautham; Georgios Bakirtzis; Alexander Will et al.,2022,artigo,en,https://arxiv.org/pdf/2204.08999
+hobbs2022_2209_00552.pdf,Systems Theoretic Process Analysis of a Run Time Assured Neural Network Control System,Kerianne L. Hobbs; Benjamin K. Heiner; Lillian Busse et al.,2022,artigo,en,https://arxiv.org/pdf/2209.00552

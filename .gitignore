@@ -1,0 +1,21 @@
+# Segredos e ambiente
+.env
+.venv/
+
+# Dados (PDFs e índices ficam fora do git; só o metadata.csv é versionado)
+data/raw/*
+!data/raw/.gitkeep
+data/chroma/
+data/*.pkl
+data/processed/
+
+# Cache de chamadas ao LLM
+.cache/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Resultados de avaliação gerados
+evals/results/

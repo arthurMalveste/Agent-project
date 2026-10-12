@@ -17,6 +17,4 @@ __pycache__/
 *.pyc
 .pytest_cache/
 
-# Resultados de avaliação gerados
-evals/results/
 data/chunks.jsonl

@@ -196,6 +196,20 @@ def _texto_rotulado(estado: Estado) -> str:
     )
 
 
+def prompt_sintese(pergunta: str, trechos_rotulados: str, comparacao: str = "") -> str:
+    """Prompt de síntese único: o agente e os baselines da avaliação usam exatamente o mesmo."""
+    previa = f"\nAnálise comparativa prévia (use para estruturar a resposta):\n{comparacao}\n" if comparacao else ""
+    return (
+        "Responda à pergunta usando SOMENTE os trechos fornecidos. Regras:\n"
+        "- Divida a resposta em afirmações curtas; cada uma com pelo menos um rótulo de fonte em 'fontes' "
+        "(ex.: [\"S1\"]). Nunca cite um rótulo que não exista.\n"
+        "- Não complete com conhecimento próprio. O que os trechos não cobrem vai em 'lacunas'.\n"
+        "- Se dois documentos discordam, diga isso explicitamente.\n"
+        "- Escreva na mesma língua da pergunta.\n\n"
+        f"Pergunta: {pergunta}\n{previa}\nTrechos:\n{trechos_rotulados}"
+    )
+
+
 def comparar(estado: Estado) -> Estado:
     prompt = (
         "Com base APENAS nos trechos rotulados, agrupe o que cada documento diz sobre a pergunta e aponte "
@@ -210,16 +224,7 @@ def sintetizar(estado: Estado) -> Estado:
     if not estado.get("rotulos"):
         vazio = citations.Resposta(afirmacoes=[], lacunas=[f"O corpus não trouxe trechos relevantes para: {estado['pergunta']}"])
         return {"resposta": {"bruta": vazio.model_dump()}}
-    comparacao = f"\nAnálise comparativa prévia (use para estruturar a resposta):\n{estado['comparacao']}\n" if estado.get("comparacao") else ""
-    prompt = (
-        "Responda à pergunta usando SOMENTE os trechos fornecidos. Regras:\n"
-        "- Divida a resposta em afirmações curtas; cada uma com pelo menos um rótulo de fonte em 'fontes' "
-        "(ex.: [\"S1\"]). Nunca cite um rótulo que não exista.\n"
-        "- Não complete com conhecimento próprio. O que os trechos não cobrem vai em 'lacunas'.\n"
-        "- Se dois documentos discordam, diga isso explicitamente.\n"
-        "- Escreva na mesma língua da pergunta.\n\n"
-        f"Pergunta: {estado['pergunta']}\n{comparacao}\nTrechos:\n{_texto_rotulado(estado)}"
-    )
+    prompt = prompt_sintese(estado["pergunta"], _texto_rotulado(estado), estado.get("comparacao", ""))
     r = _estruturado("main", citations.Resposta, prompt)
     return {"resposta": {"bruta": r.model_dump()}}
 
@@ -281,6 +286,8 @@ def perguntar(pergunta: str, verbose: bool = True, **configurable) -> Estado:
                                    stream_mode="updates"):
         for no, saida in evento.items():
             estado.update(saida)
+            if no == "sintetizar":
+                estado["bruta"] = saida["resposta"]["bruta"]  # antes da verificação (usado na avaliação)
             if verbose:
                 extra = ""
                 if no == "planejar":

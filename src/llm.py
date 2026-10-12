@@ -34,6 +34,7 @@ def _modelo_base(provider: str, papel: str, temperature: float) -> BaseChatModel
             model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
             temperature=temperature,
             google_api_key=os.getenv("GEMINI_API_KEY"),
+            thinking_level="low",  # sem isso cada chamada leva ~60 s no plano gratuito
             max_retries=0,
         )
     if provider == "ollama":
@@ -41,6 +42,19 @@ def _modelo_base(provider: str, papel: str, temperature: float) -> BaseChatModel
 
         return ChatOllama(model=os.getenv("OLLAMA_MODEL", "qwen2.5:3b"), temperature=temperature)
     raise ValueError(f"LLM_PROVIDER desconhecido: {provider!r} (use groq, gemini ou ollama)")
+
+
+class CotaDiariaEsgotada(RuntimeError):
+    """A cota diária do plano gratuito acabou: esperar segundos não adianta, só no dia seguinte."""
+
+
+# Contador de chamadas reais ao provedor (não conta acertos de cache); serve de medida de custo na avaliação.
+ESTATISTICAS = {"chamadas": 0}
+
+
+def _cota_diaria(exc: Exception) -> bool:
+    texto = str(exc).lower()
+    return any(s in texto for s in ("per day", "tokens per day", "requests per day", "(tpd)", "(rpd)", "perday"))
 
 
 def _eh_rate_limit(exc: Exception) -> bool:
@@ -79,17 +93,22 @@ class LLMComCache:
     chamadas determinísticas (temperature=0): repetir um teste não gasta a cota gratuita.
     """
 
-    def __init__(self, modelo: BaseChatModel, provider: str, usar_cache: bool = True):
+    def __init__(self, modelo: BaseChatModel, provider: str, usar_cache: bool | None = None):
         self.modelo = modelo
         self.provider = provider
-        self.usar_cache = usar_cache
+        # LLM_CACHE=0 desliga o cache (a avaliação usa isso para medir latência e custo reais)
+        self.usar_cache = (os.getenv("LLM_CACHE", "1") != "0") if usar_cache is None else usar_cache
         self.nome = getattr(modelo, "model_name", None) or getattr(modelo, "model", "desconhecido")
 
     def _com_retry(self, fn):
         for tentativa in range(MAX_RETRIES):
             try:
-                return fn()
+                resultado = fn()
+                ESTATISTICAS["chamadas"] += 1
+                return resultado
             except Exception as exc:  # noqa: BLE001 - só repetimos erros de rate limit
+                if _eh_rate_limit(exc) and _cota_diaria(exc):
+                    raise CotaDiariaEsgotada(f"{self.provider}: {str(exc)[:300]}") from exc
                 if not _eh_rate_limit(exc) or tentativa == MAX_RETRIES - 1:
                     raise
                 espera = _espera_sugerida(exc, min(2 ** tentativa * 3, 60))

@@ -60,6 +60,13 @@ def _espera_sugerida(exc: Exception, padrao: float) -> float:
     return min(seg + 1.0, 90.0)
 
 
+def _texto(conteudo) -> str:
+    """Alguns provedores (Gemini 3) devolvem o conteúdo como lista de partes; normaliza para str."""
+    if isinstance(conteudo, str):
+        return conteudo
+    return "".join(p if isinstance(p, str) else p.get("text", "") for p in conteudo)
+
+
 def _chave(provider: str, modelo: str, mensagens: list[BaseMessage]) -> str:
     conteudo = json.dumps([[m.type, m.content] for m in mensagens], ensure_ascii=False)
     return hashlib.sha256(f"{provider}|{modelo}|{conteudo}".encode()).hexdigest()
@@ -93,8 +100,9 @@ class LLMComCache:
         mensagens = self.modelo._convert_input(entrada).to_messages()
         arquivo = CACHE_DIR / f"{_chave(self.provider, str(self.nome), mensagens)}.json"
         if self.usar_cache and arquivo.exists():
-            return AIMessage(content=json.loads(arquivo.read_text(encoding="utf-8"))["content"])
-        resposta = self._com_retry(lambda: self.modelo.invoke(mensagens, **kwargs))
+            return AIMessage(content=_texto(json.loads(arquivo.read_text(encoding="utf-8"))["content"]))
+        bruta = self._com_retry(lambda: self.modelo.invoke(mensagens, **kwargs))
+        resposta = AIMessage(content=_texto(bruta.content))
         if self.usar_cache:
             CACHE_DIR.mkdir(parents=True, exist_ok=True)
             arquivo.write_text(json.dumps({"content": resposta.content}, ensure_ascii=False), encoding="utf-8")
